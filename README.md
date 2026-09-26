@@ -1,6 +1,6 @@
 # Manufacturing Defect Discovery - Clustering & Association Rules
 
-##Overview
+## Overview
 
 Manufacturing defects are often influenced by combinations of operating and production conditions rather than by a single factor. This project analyzes manufacturing production data to identify distinct production environments and investigate the conditions associated with different types of defects.
 
