@@ -1,30 +1,94 @@
 # Manufacturing Defect Discovery - Clustering & Association Rules
 
+##Overview
+
+Manufacturing defects are often influenced by combinations of operating and production conditions rather than by a single factor. This project analyzes manufacturing production data to identify distinct production environments and investigate the conditions associated with different types of defects.
+
+The analysis follows a two-stage approach:
+
+1) K-Means clustering is used to segment production batches into distinct operating environments.
+2) Apriori association rule mining is applied separately within each cluster to identify recurring combinations of production conditions associated with specific defect types.
+
+This allows the analysis to move from identifying what types of production environments exist to understanding which condition combinations are associated with defects within each environment.
+
 ## Problem
 
-A manufacturing company runs thousands of production batches, but defects don't occur
-uniformly across the plant. Some combinations of machine condition, material, process
-settings, and shift factors are riskier than others. The goal of this project is to
-segment production batches into distinct operating environments and identify which
-condition combinations within each environment are associated with specific defect
-types.
+A manufacturing facility may operate under many combinations of temperature, pressure, vibration, power consumption, material properties, machine age, production speed, and other conditions.
+
+Simply looking at the overall defect rate may hide important patterns because the same defect can occur under different production environments.
+
+The objective of this project is to:
+
+Segment production batches into meaningful operating-condition clusters.
+Compare defect rates across the identified clusters.
+Profile the characteristics of each production environment.
+Identify recurring combinations of production conditions associated with specific defect types.
+Provide interpretable patterns that can be investigated for process monitoring and quality improvement.
 
 ## Dataset
 
-4,000 production batches with 30+ recorded variables, covering:
+The dataset contains 4,000 production records and 35 columns.
 
-- Continuous process readings: operating temperature, pressure, vibration, power
-  consumption, material hardness/thickness, humidity, cycle time, machine age,
-  production speed, tool age, batch size
-- Pre-thresholded binary flags for the same variables (e.g. `High_Temperature`,
-  `Old_Machine`, `Large_Batch`)
-- Categorical fields: machine type, material type, shift, operator experience,
-  production line
-- Target fields: `Defect` (yes/no) and `Defect_Type` (Assembly, Material, Dimensional,
-  Structural, Surface, or none)
+Continuous Production Variables:
 
-A small percentage of rows had missing values across the continuous columns; these
-were imputed using the median of each column before clustering.
+Operating Temperature
+Pressure
+Vibration
+Power Consumption
+Material Hardness
+Humidity
+Cycle Time
+Machine Age
+Production Speed
+Material Thickness
+Tool Age
+Batch Size
+
+Missing values in these numerical variables are handled using median imputation before clustering.
+
+Categorical Variables:
+
+Machine Type
+Material Type
+Shift
+Operator Experience
+Production Line
+
+These variables are not used to determine the K-Means clusters. They are encoded and used for post-clustering profiling to understand the composition of each production environment.
+
+Binary Production Conditions:
+
+Old Machine
+High Speed
+High Temperature
+High Pressure
+High Vibration
+Long Cycle
+High Power Consumption
+Thick Material
+Hard Material
+Old Tool
+Large Batch
+High Humidity
+Night Shift
+New Operator
+High Workload
+
+These indicators are used to construct transactions for Apriori association rule mining.
+
+Target Information:
+
+Defect — indicates whether a production batch contains a defect.
+Defect_Type — identifies the type of defect.
+
+Defect categories include:
+
+Assembly Defect
+Dimensional Defect
+Material Defect
+Structural Defect
+Surface Defect
+No Defect
 
 ## Approach
 
@@ -49,10 +113,10 @@ exist because different environments are being averaged together.
 
 | Cluster | Size | Defect rate | Profile |
 |---|---|---|---|
-| 0 | 961 | 21.4% | Fast production lines — highest speed and operating temperature, moderately high power consumption, frequent large batches and high workload |
-| 1 | 1514 | 9.2% | Standard operating conditions — lowest vibration and power consumption of the four clusters, few elevated-condition flags |
-| 2 | 701 | 44.9% | Aging equipment — oldest machines and tools, highest vibration, longest cycle times |
-| 3 | 824 | 35.6% | Heavy material processing — highest pressure and power consumption, hardest/thickest material, relatively old tooling |
+| 0 | 961 | 21.4% | Fast production lines - highest speed and operating temperature, moderately high power consumption, frequent large batches and high workload |
+| 1 | 1514 | 9.2% | Standard operating conditions - lowest vibration and power consumption of the four clusters, few elevated-condition flags |
+| 2 | 701 | 44.9% | Aging equipment - oldest machines and tools, highest vibration, longest cycle times |
+| 3 | 824 | 35.6% | Heavy material processing - highest pressure and power consumption, hardest/thickest material, relatively old tooling |
 
 Cluster 2 and Cluster 3 stand out as the higher-risk environments, with defect rates
 roughly 4–5x that of Cluster 1. Cluster 1 behaves as a baseline: process conditions
