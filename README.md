@@ -1,4 +1,4 @@
-# Manufacturing Defect Discovery — Clustering & Association Rules
+# Manufacturing Defect Discovery - Clustering & Association Rules
 
 ## Problem
 
